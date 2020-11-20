@@ -21,20 +21,30 @@ const Search = () => {
       setResults(data.query.search);
     };
 
-    if(term) {
+    const timeoutId = setTimeout(() => {
+      if(term) {
       search();
     }
+    }, 700);
     
+    // This function is returned but not invoked yet, when useEffect is rerenderd, than it gets invoked
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [term]);
 
   const renderedResults = results.map((result) => {
+    // we can use dangerouslySetInnerHTML because it's a very low risk and there are no account settings in this app
     return (
       <div key ={result.pageid} className="item">
+        <div className="right floated content">
+          <a href={`https://en.wikipedia.org?curid=${result.pageid}`} className="ui button">Go</a>
+        </div>
         <div className="content">
           <div className="header">
             {result.title}
           </div>
-            {result.snippet}
+          <span dangerouslySetInnerHTML={{ __html: result.snippet }}></span>      
         </div>
       </div>
     );
